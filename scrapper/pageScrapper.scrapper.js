@@ -40,7 +40,7 @@ const {performance} = require('perf_hooks');
                     width: 1300,
                     height: 600
                 })
-
+                const timeBeforeFetch = performance.now()
                 try{
                     await newPage.goto(link);
                     await newPage.waitForSelector('.B_NuCI',{timeout: 6000});
@@ -49,6 +49,8 @@ const {performance} = require('perf_hooks');
                     console.log('Error in product page',e)
                     await newPage.goto(link);
                 }
+                console.log('time to fetch the page: ',performance.now()-timeBeforeFetch)
+
                 dataObj['title'] = await newPage.$eval('.B_NuCI', text => text.textContent);
                 console.log('Scrapping Product: ',dataObj.title)
                 dataObj.pricing = await newPage.evaluate(()=>{
@@ -156,7 +158,7 @@ const {performance} = require('perf_hooks');
                 scrappedProducts.push(currentPageData);
                 countProduct++;
             }
-            const average = averageList.reduce((a, b) => a + b) / averageList.length;
+            const average = averageListOfPages.reduce((a, b) => a + b) / averageListOfPages.length;
             console.log('Average Time to scrap Product: ' + average + 'ms');
 
             let nextButtonExist = false;
