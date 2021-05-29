@@ -6,7 +6,7 @@ const fs = require('fs');
 const saveCategory = async (fileName,data) => {
     try{
         const dataStr = JSON.stringify(data,null,4)
-        fs.writeFileSync(`../data/${fileName}.json`, dataStr);
+        fs.writeFileSync(__dirname +`\\..\\data\\${fileName}.json`, dataStr);
         console.log('product data saved in products.json')
     }
     catch(error){
@@ -20,7 +20,11 @@ async function scrapeAll(browserInstance,scrapOn){
     try{
         browser = await browserInstance;
 
-        const dataArr = [];
+        const dataArr = [
+            {
+                data:'demo'
+            }
+        ];
         for(var i = 0; i<scrapOn.length; i++){
             let {url,name} = scrapOn[i];
             const dataObj = await categoryScrapper(browser,url)
