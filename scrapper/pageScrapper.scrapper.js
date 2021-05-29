@@ -1,8 +1,10 @@
 
 const {reviewPage,reviewArrayParser,itrateOnReviewPages} = require('./review-page.scrapper')
+const {performance} = require('perf_hooks');
 
     const scraper = async (page,browser,url) =>new Promise(async (resolve,reject) =>  {
         // let page = await browser.newPage();
+    
         await page.setViewport({
             width: 1300,
             height: 600
@@ -14,6 +16,7 @@ const {reviewPage,reviewArrayParser,itrateOnReviewPages} = require('./review-pag
         const maxNumberOfPages = 20;
         const maxNumberOfProducts = 1;
         async function scrapeCurrentPage(){
+            const PageT0 = performance.now();
             console.log('Product collection page number: ',countPage)
             countPage++;
             if(await page.$('.ZVE96X')) await page.reload()
@@ -113,9 +116,9 @@ const {reviewPage,reviewArrayParser,itrateOnReviewPages} = require('./review-pag
                         return tempData
                     })
                 }
-            catch(e){
-                console.log(e,'specification')
-            }
+                catch(e){
+                    console.log(e,'specification')
+                }
                 dataObj['description'] = await newPage.evaluate(()=>{
                     const descCont = document.querySelector('._1mXcCf>p');
                     return descCont?descCont.innerHTML:null
@@ -134,17 +137,32 @@ const {reviewPage,reviewArrayParser,itrateOnReviewPages} = require('./review-pag
                     dataObj['reviews'] = await itrateOnReviewPages(browser,moreRatingLink,5)
                 }
                 console.log('Product Scrapped: ',dataObj.title)
+
                 resolve(dataObj);
                 await newPage.close();
             });
-
+            const averageListOfPages = [];
             for(link in urls){
                 console.log('product number: ',countProduct);
+ 
+                const t0 = performance.now();
+
                 let currentPageData = await pagePromise(urls[link]);
+                
+                const t1 = performance.now();
+                console.log('Time to scrap Product: ' , (t1 - t0) , 'ms');
+                averageListOfPages.push(t1 - t0);
+
                 scrappedProducts.push(currentPageData);
                 countProduct++;
             }
+            const average = averageList.reduce((a, b) => a + b) / averageList.length;
+            console.log('Average Time to scrap Product: ' + average + 'ms');
+
             let nextButtonExist = false;
+
+            const PageT1 = performance.now();
+            console.log('Average Time to scrape Page: ' , (PageT1-PageT0) , 'ms');
                 try{
                     const nextButton = await page.$eval('._1LKTO3:last-of-type', a => a.href);
                     nextButtonExist = true;

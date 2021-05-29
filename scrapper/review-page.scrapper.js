@@ -1,4 +1,5 @@
 
+const {performance} = require('perf_hooks');
 const reviewArrayParser = async (newPage,reviewsClass) => new Promise(async (resolve,reject) => {
     const allReviews = await newPage.$$eval(reviewsClass, reviewContArr => {
 
@@ -39,15 +40,17 @@ const reviewPagePromise = (browser,link) => new Promise(async (resolve,reject)=>
         width: 1300,
         height: 600
     })
-    await newPage.goto(link);
-    if(await newPage.$('.ZVE96X')) await newPage.reload()
+    const timeBeforeFecthReview = performance.now()
     try{
+        await newPage.goto(link);
+        if(await newPage.$('.ZVE96X')) await newPage.reload()
         await newPage.waitForSelector('._27M-vq, ._16PBlm',{timeout: 6000})
     }
     catch(e){
         await page.reload()
     }
-  
+    console.log('time to fetch review page:', performance.now() - timeBeforeFecthReview)
+
     const reviewsClass = await newPage.$('._27M-vq')?'._27M-vq':'._16PBlm';
     const reviewArray = await reviewArrayParser(newPage,reviewsClass)
     let nextLink = ''
