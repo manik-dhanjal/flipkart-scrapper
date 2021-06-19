@@ -11,7 +11,7 @@ app.get('/',(req,res)=>{
     res.send('hello world!')
 })
 
-app.get('/start-scrapping',(req,res)=>{
+app.get('/start',(req,res)=>{
     
 
     const scrapOn = [
@@ -33,7 +33,7 @@ app.get('/download', function(req, res){
     res.download(file); // Set disposition and send it.
   });
 
-app.get('/stop-scrapping',async (req,res) => {
+app.get('/stop',async (req,res) => {
    let browser = await browserInstance
    browser.close();
     res.send('Browser instance and scrapping stopped')
