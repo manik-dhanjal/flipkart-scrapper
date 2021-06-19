@@ -5,13 +5,13 @@ const express = require('express')
 const app = express();
 const browserInstance = startBrowser();
 
-app.get('/',(req,res)=>{
+app.get('/scrapper',(req,res)=>{
 
     console.log('server is working');
     res.send('hello world!')
 })
 
-app.get('/start',(req,res)=>{
+app.get('/scrapper/start',(req,res)=>{
     
 
     const scrapOn = [
@@ -28,12 +28,12 @@ app.get('/start',(req,res)=>{
     scraperController(browserInstance,scrapOn)
 })
 
-app.get('/download', function(req, res){
+app.get('/scrapper/download', function(req, res){
     const file = `${__dirname}/data/product-data.json`;
     res.download(file); // Set disposition and send it.
   });
 
-app.get('/stop',async (req,res) => {
+app.get('/scrapper/stop',async (req,res) => {
    let browser = await browserInstance
    browser.close();
     res.send('Browser instance and scrapping stopped')
