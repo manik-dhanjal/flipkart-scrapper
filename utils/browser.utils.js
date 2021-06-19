@@ -5,6 +5,7 @@ const startBrowser =  async ()=>{
     try{
         console.log("Openning browser....")
         browser = await puppeteer.launch({
+            args: ['--no-sandbox'],
             'ignoreHTTPSErrors': true
         })
     }catch(error){
