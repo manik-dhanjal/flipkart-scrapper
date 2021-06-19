@@ -47,7 +47,7 @@ const reviewPagePromise = (browser,link) => new Promise(async (resolve,reject)=>
         await newPage.waitForSelector('._27M-vq, ._16PBlm',{timeout: 6000})
     }
     catch(e){
-        await page.reload()
+        await newPage.reload()
     }
     console.log('time to fetch review page:', performance.now() - timeBeforeFecthReview)
 

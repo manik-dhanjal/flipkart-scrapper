@@ -16,16 +16,12 @@ app.get('/start-scrapping',(req,res)=>{
 
     const scrapOn = [
         {
-            name:'Pen Drives',
-            url:'https://www.flipkart.com/computers/storage/pen-drives/pr?sid=6bo%2Cjdy%2Cuar&otracker=categorytree&page=5'
+            name:'Computers',
+            url:'https://www.flipkart.com/computers/pr?sid=6bo&otracker=categorytree'
         },
         {
-            name:'Internal Hard Drive',
-            url:'https://www.flipkart.com/computers/storage/internal-hard-drive/pr?sid=6bo,jdy,dus&otracker=categorytree'
-        },
-        {
-            name:'audio Players',
-            url:'https://www.flipkart.com/computers/pr?sid=6bo&q=mi+max+4+5g&otracker=categorytree'
+            name:'Mobiles',
+            url: 'https://www.flipkart.com/mobiles/pr?sid=tyy,4io&otracker=categorytree'
         }
     ]
     res.send('Initited srapping')

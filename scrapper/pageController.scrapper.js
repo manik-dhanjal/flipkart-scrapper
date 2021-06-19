@@ -2,10 +2,16 @@
 const categoryScrapper = require('./category.scrapper')
 const scraper = require('./pageScrapper.scrapper')
 const fs = require('fs');
-
 const saveCategory = async (fileName,data) => {
     try{
         const dataStr = JSON.stringify(data,null,4)
+        fs.unlink(__dirname +`\\..\\data\\${fileName}.json`, (err) => {
+            if (err) {
+                throw err;
+            }
+        
+            console.log("File is deleted.");
+        });       
         fs.writeFileSync(__dirname +`\\..\\data\\${fileName}.json`, dataStr);
         console.log('product data saved in products.json')
     }
@@ -32,9 +38,8 @@ async function scrapeAll(browserInstance,scrapOn){
                 name:name,
                 data:dataObj
             })
+            saveCategory('product-data',dataArr)
         }
-        saveCategory('product-data',dataArr)
-    
         // await scraper(browser,url);
         browser.close();
     }

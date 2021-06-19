@@ -1,7 +1,10 @@
 
 const {reviewPage,reviewArrayParser,itrateOnReviewPages} = require('./review-page.scrapper')
 const {performance} = require('perf_hooks');
-
+    const gotAndCheck = async (newPage,link,selector) => {
+        await newPage.goto(link);
+        return await newPage.waitForSelector(selector,{timeout: 6000});
+    }
     const scraper = async (page,browser,url) =>new Promise(async (resolve,reject) =>  {
         // let page = await browser.newPage();
     
@@ -13,8 +16,10 @@ const {performance} = require('perf_hooks');
         const scrappedProducts = []
         var countPage = 1;
         var countProduct = 1;
-        const maxNumberOfPages = 20;
+        const maxNumberOfPages = 2;
         const maxNumberOfProducts = 1;
+
+
         async function scrapeCurrentPage(){
             const PageT0 = performance.now();
             console.log('Product collection page number: ',countPage)
@@ -42,12 +47,16 @@ const {performance} = require('perf_hooks');
                 })
                 const timeBeforeFetch = performance.now()
                 try{
-                    await newPage.goto(link);
-                    await newPage.waitForSelector('.B_NuCI',{timeout: 6000});
+                    await gotAndCheck(newPage,link,'.B_NuCI')
                 }
                 catch(e){
                     console.log('Error in product page',e)
-                    await newPage.goto(link);
+                    try{
+                        await gotAndCheck(newPage,link,'.B_NuCI')
+                    }
+                    catch(e2){
+                        reject('error:',e2.message)
+                    }
                 }
                 console.log('time to fetch the page: ',performance.now()-timeBeforeFetch)
 
@@ -136,30 +145,33 @@ const {performance} = require('perf_hooks');
                     const moreRatingLink =await newPage.$eval('.JOpGWq>a',(linkCont)=>{
                         return linkCont.href
                     });
-                    dataObj['reviews'] = await itrateOnReviewPages(browser,moreRatingLink,5)
+                    dataObj['reviews'] = await itrateOnReviewPages(browser,moreRatingLink,3)
                 }
                 console.log('Product Scrapped: ',dataObj.title)
 
                 resolve(dataObj);
                 await newPage.close();
             });
-            const averageListOfPages = [];
+
+
             for(link in urls){
                 console.log('product number: ',countProduct);
- 
-                const t0 = performance.now();
+                try{
+                    const t0 = performance.now();
 
-                let currentPageData = await pagePromise(urls[link]);
-                
-                const t1 = performance.now();
-                console.log('Time to scrap Product: ' , (t1 - t0) , 'ms');
-                averageListOfPages.push(t1 - t0);
+                    let currentPageData = await pagePromise(urls[link]);
+                    
+                    const t1 = performance.now();
+                    console.log('Time to scrap Product: ' , (t1 - t0) , 'ms');
+    
+                    scrappedProducts.push(currentPageData);
 
-                scrappedProducts.push(currentPageData);
+                }
+                catch(error){
+                    console.log('product avoided with ink',urls[link],error)
+                }
                 countProduct++;
             }
-            const average = averageListOfPages.reduce((a, b) => a + b) / averageListOfPages.length;
-            console.log('Average Time to scrap Product: ' + average + 'ms');
 
             let nextButtonExist = false;
 

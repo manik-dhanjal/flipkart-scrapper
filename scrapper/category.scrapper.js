@@ -79,7 +79,6 @@ const categoryScrapper =(browser,rootUrl) => new Promise(async (resolve,reject) 
     })
     const everthing =await scrapedCategory(page,browser,rootUrl)
     await page.close();
-    console.log(everthing)
     resolve(everthing)
 })
 
